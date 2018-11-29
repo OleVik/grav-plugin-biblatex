@@ -26,7 +26,7 @@ class BibLaTeXPlugin extends Plugin
 				if (isset($pageobject->header()->bibtex)) {
 					$bibtex_file = $pageobject->path() . '/' . $pageobject->header()->bibtex;
 					if (file_exists($bibtex_file)) {
-						$content = $page->content();
+						$content = $pageobject->content();
 						$content .= '<div class="biblatex">';
 						$file = file_get_contents($bibtex_file);
 						$displayTypes = $pluginsobject['biblatex']['displayTypes'];
@@ -39,7 +39,7 @@ class BibLaTeXPlugin extends Plugin
 						$bibtex_content = bibfile2html($bibtex_file, $displayTypes, $groupType, $groupYear, '', $highlightName, $numbersDesc, $sorting, $authorLimit, '');
 						$content .= $bibtex_content;
 						$content .= '</div>';
-						$page->setRawContent($content);
+						$pageobject->setRawContent($content);
 					}
 				}
             }
