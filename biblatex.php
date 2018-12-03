@@ -11,38 +11,65 @@ require_once 'vendor/bibtex2html.php';
 
 class BibLaTeXPlugin extends Plugin
 {
-    public static function getSubscribedEvents() {
+    /**
+     * Register events with Grav
+     * 
+     * @return void
+     */
+    public static function getSubscribedEvents()
+    {
         return [
-            'onPageContentProcessed' => ['onPageContentProcessed', -1]
+            'onPluginsInitialized' => ['onPluginsInitialized', 0]
         ];
     }
-    public function onPageContentProcessed(Event $event)
+    
+    /**
+     * Initialize the plugin
+     * 
+     * @return void
+     */
+    public function onPluginsInitialized()
     {
-        $page = $event['page'];
-        $pluginsobject = (array) $this->config->get('plugins');
-        $pageobject = $this->grav['page'];
-		if (isset($pluginsobject['biblatex'])) {
-            if ($pluginsobject['biblatex']['enabled']) {
-				if (isset($pageobject->header()->bibtex)) {
-					$bibtex_file = $pageobject->path() . '/' . $pageobject->header()->bibtex;
-					if (file_exists($bibtex_file)) {
-						$content = $pageobject->content();
-						$content .= '<div class="biblatex">';
-						$file = file_get_contents($bibtex_file);
-						$displayTypes = $pluginsobject['biblatex']['displayTypes'];
-						$groupType = $pluginsobject['biblatex']['groupType'];
-						$groupYear = $pluginsobject['biblatex']['groupYear'];
-						$highlightName = $pluginsobject['biblatex']['highlightName'];
-						$numbersDesc = $pluginsobject['biblatex']['numbersDesc'];
-						$sorting = $pluginsobject['biblatex']['sorting'];
-						$authorLimit = $pluginsobject['biblatex']['authorLimit'];
-						$bibtex_content = bibfile2html($bibtex_file, $displayTypes, $groupType, $groupYear, '', $highlightName, $numbersDesc, $sorting, $authorLimit, '');
-						$content .= $bibtex_content;
-						$content .= '</div>';
-						$pageobject->setRawContent($content);
-					}
-				}
-            }
+        if ($this->isAdmin()) {
+            return;
+        }
+        $config = (array) $this->config->get('plugins')['biblatex'];
+        if ($config['enabled']) {
+            $this->enable(
+                [
+                    'onPageContentProcessed' => ['onPageContentProcessed', -1]
+                ]
+            );
+        } else {
+            return;
+        }
+    }
+    
+    /**
+     * Manipulate page content
+     * 
+     * @return void
+     */
+    public function onPageContentProcessed()
+    {
+        $page = $this->grav['page'];
+        $config = (array) $this->config->get('plugins')['biblatex'];
+        $bibFile = $page->path() . DIRECTORY_SEPARATOR . $page->header()->bibtex;
+        if (isset($page->header()->bibtex) && file_exists($bibFile)) {
+            $content = $page->content();
+            $content .= '<div class="biblatex">';
+            $file = file_get_contents($bibFile);
+            $displayTypes = $config['displayTypes'];
+            $groupType = $config['groupType'];
+            $groupYear = $config['groupYear'];
+            $highlightName = $config['highlightName'];
+            $numbersDesc = $config['numbersDesc'];
+            $sorting = $config['sorting'];
+            $authorLimit = $config['authorLimit'];
+            $bibtex_content = bibfile2html($bibFile, $displayTypes, $groupType, $groupYear, '', $highlightName, $numbersDesc, $sorting, $authorLimit, '');
+            $content .= $bibtex_content;
+            $content .= '</div>';
+            $page->setRawContent($content);
         }
     }
 }
