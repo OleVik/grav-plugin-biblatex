@@ -1,5 +1,5 @@
 name: BibLaTeX
-version: 1.0.2
+version: 1.0.3
 description: "Renders a Bibtex-file into HTML and appends it to page content."
 icon: asterisk
 author:

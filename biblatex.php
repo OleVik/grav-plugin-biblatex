@@ -53,9 +53,9 @@ class BibLaTeXPlugin extends Plugin
     public function onPageContentProcessed()
     {
         $page = $this->grav['page'];
-        $config = (array) $this->config->get('plugins')['biblatex'];
-        $bibFile = $page->path() . DIRECTORY_SEPARATOR . $page->header()->bibtex;
         if (isset($page->header()->bibtex) && file_exists($bibFile)) {
+            $config = (array) $this->config->get('plugins')['biblatex'];
+            $bibFile = $page->path() . DIRECTORY_SEPARATOR . $page->header()->bibtex;
             $content = $page->content();
             $content .= '<div class="biblatex">';
             $file = file_get_contents($bibFile);
