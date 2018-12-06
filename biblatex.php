@@ -53,23 +53,25 @@ class BibLaTeXPlugin extends Plugin
     public function onPageContentProcessed()
     {
         $page = $this->grav['page'];
-        if (isset($page->header()->bibtex) && file_exists($bibFile)) {
+        if (isset($page->header()->bibtex)) {
             $config = (array) $this->config->get('plugins')['biblatex'];
             $bibFile = $page->path() . DIRECTORY_SEPARATOR . $page->header()->bibtex;
-            $content = $page->content();
-            $content .= '<div class="biblatex">';
-            $file = file_get_contents($bibFile);
-            $displayTypes = $config['displayTypes'];
-            $groupType = $config['groupType'];
-            $groupYear = $config['groupYear'];
-            $highlightName = $config['highlightName'];
-            $numbersDesc = $config['numbersDesc'];
-            $sorting = $config['sorting'];
-            $authorLimit = $config['authorLimit'];
-            $bibtex_content = bibfile2html($bibFile, $displayTypes, $groupType, $groupYear, '', $highlightName, $numbersDesc, $sorting, $authorLimit, '');
-            $content .= $bibtex_content;
-            $content .= '</div>';
-            $page->setRawContent($content);
+            if (file_exists($bibFile)) {
+                $content = $page->content();
+                $content .= '<div class="biblatex">';
+                $file = file_get_contents($bibFile);
+                $displayTypes = $config['displayTypes'];
+                $groupType = $config['groupType'];
+                $groupYear = $config['groupYear'];
+                $highlightName = $config['highlightName'];
+                $numbersDesc = $config['numbersDesc'];
+                $sorting = $config['sorting'];
+                $authorLimit = $config['authorLimit'];
+                $bibtex_content = bibfile2html($bibFile, $displayTypes, $groupType, $groupYear, '', $highlightName, $numbersDesc, $sorting, $authorLimit, '');
+                $content .= $bibtex_content;
+                $content .= '</div>';
+                $page->setRawContent($content);
+            }
         }
     }
 }
